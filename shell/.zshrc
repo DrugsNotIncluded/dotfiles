@@ -4,15 +4,8 @@ ZSH_THEME="af-magic"
 plugins=(git
 	virtualenv)
 
-# user configuration
-alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
-
-# update all packages
+# package manager aliases
 alias pm_upgrade='/usr/bin/sudo /sbin/apk -U upgrade'
-
+alias pm_fix='/usr/bin/sudo /sbin/apk fix'
+alias pm_install='/usr/bin/sudo /sbin/apk add'
 source $ZSH/oh-my-zsh.sh
-function config_install {
-    git clone --bare "${1}" $HOME/.cfg
-    config config --local status.showUntrackedFiles no
-    config checkout
-}
