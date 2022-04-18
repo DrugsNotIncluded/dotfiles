@@ -1,6 +1,12 @@
 ;;; -*- lexical-binding: t; -*-
 ;;========================================================================
 
+(setq initial-scratch-message "
+M-p s s -- Search in project
+C-s     -- Search in file
+M-p p   -- Switch projectile project
+C-t     -- Toggle Treemacs buffer")
+
 (require 'package)
 (setq package-archives '(("gnu"   .  "https://elpa.gnu.org/packages/")
                          ("melpa" .  "https://melpa.org/packages/")))
@@ -26,6 +32,10 @@
   :ensure t)
 
 (setq use-package-ensure-function 'quelpa)
+
+(use-package gcmh
+  :ensure t)
+(gcmh-mode 1)
 
 ;; utility function to auto-load my package configurations
 (defun load-module (filelist)

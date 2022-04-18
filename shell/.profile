@@ -10,6 +10,3 @@ export XCURSOR_THEME=$(gsettings get org.gnome.desktop.interface cursor-theme)
 
 # Start SSH agent
 eval "$(ssh-agent)"
-
-# Add DrugsNotIncluded github key
-cat /home/ssh_keys/coffeebook | ssh-add -

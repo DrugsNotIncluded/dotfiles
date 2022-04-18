@@ -1,21 +1,29 @@
-
-#exec /bin/bash $HOME/.shell_functions/tinactive.sh "0.8"
-
-# Disabling Xwayland completely
-
 xwayland disable
-
-# Variables section
+output * bg $HOME/Wallpaper/wallpaper.* fill
 
 set $mod Mod4
 set $term alacritty
 set $menu rofi -show drun
 
-# Wallpaper
+# Disabling titlebars completely
+titlebar_border_thickness 0                                                     
+titlebar_padding 0
 
-output * bg $HOME/Wallpaper/wallpaper.* fill
+# Borders
+gaps inner 5
+gaps outer 5
+default_border pixel 3
+client.unfocused #c19e97 #c19e97 #FFFFFF #c19e97
+client.focused #4eed70 #4eed70 #000000 #4eed70
 
-# Keyboard
+# Autostart
+exec /usr/libexec/xdg-desktop-portal
+exec dbus-update-activation-environment --all
+exec "env LANG=C waybar"
+exec mako
+exec wireplumber
+exec $HOME/.local/bin/ssh-sign-keys
+
 
 input type:keyboard {
 	xkb_layout us,ru
@@ -26,22 +34,11 @@ input type:touchpad {
 	dwt disabled
 }   
 
-# Layout independent key bindings
-
 bindsym --to-code {
-	# Terminal
 	$mod+Return exec $term
-
-	# Kill focused window
 	$mod+Shift+q kill
-
-	# Start application launcher
 	$mod+d exec $menu
-
-	# Reload configuration file
 	$mod+Shift+c reload
-
-	# Exit sway
 	$mod+Shift+e killall sway
 
 	# Moving around
@@ -57,12 +54,13 @@ bindsym --to-code {
 	$mod+Shift+Down  move down
 
 	#Screenshot capture
-	$mod+Shift+S     exec sh $HOME/.config/screenshot.sh
-}
+	$mod+S           grim - | wl-copy
+	$mod+Shift+S     grim -g  "$(slurp)" - | wl-copy
 
+	#Resize
+	$mod+r mode "resize"
 
-bindsym --to-code {
-# Switch to workspace
+	#Workspaces
 	$mod+1 workspace 1
 	$mod+2 workspace 2
 	$mod+3 workspace 3
@@ -74,7 +72,7 @@ bindsym --to-code {
 	$mod+9 workspace 9
 	$mod+0 workspace 10
 
-# Move focused container to workspace
+	# Move focused container to workspace
 	$mod+Shift+1 move container to workspace 1
 	$mod+Shift+2 move container to workspace 2
 	$mod+Shift+3 move container to workspace 3
@@ -85,72 +83,37 @@ bindsym --to-code {
 	$mod+Shift+8 move container to workspace 8
 	$mod+Shift+9 move container to workspace 9
 	$mod+Shift+0 move container to workspace 10
-
-# Change split mode
+	# Change split mode
 	$mod+b splith
 	$mod+v splitv
-
-# Change layout style
-	$mod+s layout stacking
+	# Change layout style
+	$mod+q layout stacking
 	$mod+w layout tabbed
 	$mod+e layout toggle split
-
-# Make focused window fullscreen
-	$mod+f fullscreen
-
-# Toggle between tiling and floating
+	# Toggle between tiling and floating
 	$mod+Shift+space floating toggle
-
-# Toggle between tiling and gloating area
+	# Toggle between tiling and gloating area
 	$mod+space focus mode_toggle
-
-# Move focus to the parent container
-	$mod+a focus parent 
+	# Move focus to the parent container
+	$mod+a focus parent
+	#Media keys
+	XF86MonBrightnessDown exec brightnessctl set 5%-
+	XF86MonBrightnessUp exec brightnessctl set +5%
+	XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5% && paplay /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga
+	XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5% && paplay /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga
+	XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+	XF86AudioPlay exec killall -SIGUSR1 waybar
 }
 
 mode "resize" {
 	bindsym {
-		Left resize shrink width 10px
+		Left resize grow width 10px
 		Down resize grow height 10px
 		Up resize shrink height 10px
-		Right resize grow width 10px
+		Right resize shrink width 10px
 		Return mode "default"
 		Escape mode "default"
 	}
 }
-
-bindsym --to-code {
-	$mod+r mode "resize"
-}
-
-bindsym {
-XF86MonBrightnessDown exec brightnessctl set 5%-
-XF86MonBrightnessUp exec brightnessctl set +5%
-XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5% && paplay /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga
-XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5% && paplay /usr/share/sounds/freedesktop/stereo/audio-volume-change.oga
-XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
-XF86AudioPlay exec killall -SIGUSR1 waybar
-}
-
-
-
-# Disabling titlebars completely
-#font pango:monospace 0
-titlebar_border_thickness 0                                                     
-titlebar_padding 0
-
-# Gaps
-gaps inner 5
-gaps outer 5
-default_border pixel 3
-
-# Borders color
-client.unfocused #c19e97 #c19e97 #FFFFFF #c19e97
-client.focused #4eed70 #4eed70 #000000 #4eed70 
-
-exec "env LANG=C waybar"
-exec mako
-exec inactive-windows-transparency.sh
-exec wireplumber
 
 include /etc/sway/config.d/*

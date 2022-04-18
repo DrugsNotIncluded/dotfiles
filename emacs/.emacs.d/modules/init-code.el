@@ -64,6 +64,7 @@
 (add-hook 'c++-mode-hook     'eglot-ensure) ;; requires clang
 (add-hook 'js2-mode-hook     'eglot-ensure) ;; requires typescript-language-server from npm
 (add-hook 'python-mode-hook       'eglot-ensure) ;; requires python-lsp-server & jedi (PyPy)
+(add-hook 'cmake-mode-hook   'eglot-ensure) ;; requires cmake-language-server from pip
 
 (use-package pug-mode
   :ensure t)

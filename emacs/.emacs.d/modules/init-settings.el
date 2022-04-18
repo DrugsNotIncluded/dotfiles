@@ -95,8 +95,8 @@
   (let ((message-log-max nil))
     `(with-temp-message (or (current-message) "") ,@body)))
 
-(defvar *theme-dark* 'doom-dark+)
-(defvar *theme-light* 'doom-tomorrow-day)
+(defvar *theme-dark* 'modus-vivendi)
+(defvar *theme-light* 'modus-operandi)
 (defcustom *current-theme* nil
   "Current emacs theme")
 
@@ -122,3 +122,6 @@
 
 (load-theme *current-theme* t)
 (global-set-key [f5] 'theme/toggle-theme)
+
+(use-package rainbow-delimiters
+  :ensure t)

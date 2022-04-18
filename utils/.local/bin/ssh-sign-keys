@@ -1,0 +1,3 @@
+#!/bin/sh
+
+alacritty -e ssh-add /home/ssh_keys/coffeebook
