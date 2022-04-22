@@ -1,0 +1,65 @@
+#!/bin/bash
+
+Green='\033[32m'
+NC='\033[0m'
+
+install_user_packages()
+{
+	cd user_packages
+	packages=($(ls))
+	for package in ${packages[@]}
+	do
+		printf "	Installing ${Green} $package ${NC}\n"
+		stow --override=.* -t "$HOME" "$package"
+	done
+	cd ..
+}
+
+install_root_packages()
+{
+	cd root_packages
+	packages=($(ls))
+	for package in ${packages[@]}
+	do
+		printf "	Installing ${Green} $package ${NC}\n"
+		sudo stow --override=.* -t "/" "$package"
+	done
+	cd ..
+}
+
+help_message()
+{
+   echo "Run with 'user' to install user packages"
+   echo "Run with 'root' to install root packages"
+   echo "Run with 'help' to see this message"
+}
+
+if [[ $1 == "help" ]]
+then
+   help_message
+
+elif [[ $1 == "user" ]]
+then
+	echo "Installing user packages: "
+	install_user_packages
+
+elif [[ $1 == "root" ]]
+then
+	echo "Installing root packages: "
+	install_root_packages
+	
+elif [[ $1 == "remove" ]]
+then
+	if [[ $2 == "user" ]]
+	then
+		remove_user_packages
+	elif [[ $2 == "root" ]]
+	then
+		remove_root_packages
+	else
+		echo "Usage: remove user/root packages"
+	fi
+	
+else
+	help_message
+fi
