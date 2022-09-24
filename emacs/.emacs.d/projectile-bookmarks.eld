@@ -1,0 +1,1 @@
+("~/Хуета/" "~/Repo/projects/c-ftp-client/" "~/dotfiles/" "~/Repo/projects/yandex_music_cpp_example_client/" "~/Repo/projects/REPL/" "~/Repo/projects/learnopengl/" "~/Repo/projects/ogl_engine/")

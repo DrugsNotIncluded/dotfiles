@@ -1,0 +1,16 @@
+#include <nlohmann/json.hpp>
+#include <stdlib.h>
+#include <iostream>
+#include <string>
+#include <ymcppapi/ymapi.hpp>
+
+int main(int argc, char *argv[]) {
+	const std::string token = GetTokenFromCredentials(argv[1], argv[2]);
+	const string language = "ru";
+	Session session = Session(token, language);
+	json liked_tracks = session.async_user_likes_tracks().get()["result"]["library"]["tracks"];
+	auto tracks_info = session.async_tracks_download_info(liked_tracks);
+	std::cout << tracks_info[3].get() << std::endl;
+
+	return 0;
+}

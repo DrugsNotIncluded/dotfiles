@@ -1,0 +1,2 @@
+;;; Generated package description from flymake-flycheck.el  -*- no-byte-compile: t -*-
+(define-package "flymake-flycheck" "20220313.924" "Use flycheck checkers as flymake backends" '((flycheck "31") (emacs "26.1")) :commit "9040be3763b8f9952dccd9a04be25ac20a0f8745" :authors '(("Steve Purcell" . "steve@sanityinc.com")) :maintainer '("Steve Purcell" . "steve@sanityinc.com") :keywords '("convenience" "languages" "tools") :url "https://github.com/purcell/flymake-flycheck")

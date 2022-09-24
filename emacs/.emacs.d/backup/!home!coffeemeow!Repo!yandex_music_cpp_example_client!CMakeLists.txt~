@@ -1,0 +1,26 @@
+cmake_minimum_required(VERSION 3.21)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+project(example_client)
+
+add_executable(example_client
+  src/main.cpp
+)
+
+target_include_directories(example_client PRIVATE
+  "${CMAKE_SOURCE_DIR}/src"
+)
+
+execute_process(
+  COMMAND git submodule update --init
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+# install yandex music c++ API library
+add_subdirectory("${CMAKE_SOURCE_DIR}/deps/ymcppapi")
+target_link_libraries(example_client ymcppapi)
+target_include_directories(example_client PRIVATE ${ymcppapi_INCLUDE_DIRS})
+

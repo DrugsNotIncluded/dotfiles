@@ -1,0 +1,41 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <algorithm>
+#include <iterator>
+#include <vector>
+
+
+std::vector<std::string> splitMorseMessage(std::string morseMessage) {
+	std::string delimiter = "   ";
+	std::vector<std::string> result;
+}
+
+std::string translateMorseWord(std::string morseWord) {
+  std::string decoded;
+  std::istringstream iss(morseWord);
+  std::vector<std::string> morseLetters{
+    std::istream_iterator<std::string>{iss},
+    std::istream_iterator<std::string>{}};
+  for (auto &letter : morseLetters) {
+    decoded+=MORSE_CODE[letter];
+  }
+  return decoded;
+}
+
+std::string decodeMorse(std::string morseCode) {
+    std::string decoded;
+    
+	std::vector<std::string> morseWords;
+  std::string m_word;
+  while(std::getline(morseCode, m_word, "   ")) {
+    morseWords.push_back(m_word);
+  }
+  bool first = true;
+  for(auto &mword : morseWords) {
+    if (!first) decoded+=' ';
+    decoded+=translateMorseWord(mword);
+    first = false;
+  }
+	return decoded;
+}

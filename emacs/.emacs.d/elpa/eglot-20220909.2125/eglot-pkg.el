@@ -1,0 +1,2 @@
+;;; Generated package description from eglot.el  -*- no-byte-compile: t -*-
+(define-package "eglot" "20220909.2125" "Client for Language Server Protocol (LSP) servers" '((emacs "26.1") (jsonrpc "1.0.14") (flymake "1.2.1") (project "0.3.0") (xref "1.0.1") (eldoc "1.11.0") (seq "2.23")) :commit "06e6dd6693123a737fb883dcf277432d63d6518e" :authors '(("João Távora" . "joaotavora@gmail.com")) :maintainer '("João Távora" . "joaotavora@gmail.com") :keywords '("convenience" "languages") :url "https://github.com/joaotavora/eglot")

@@ -1,0 +1,46 @@
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include "shaders.hpp"
+
+unsigned int LoadShader(std::string shader_path, GladGLContext *context, GLuint ShaderType) {
+	std::ifstream in(shader_path);
+	const std::string shaderSource((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+	const char *temp_shader = shaderSource.c_str();
+	
+	
+
+	unsigned int Shader = context->CreateShader(ShaderType);
+	context->ShaderSource(Shader, 1, &temp_shader, NULL);
+	context->CompileShader(Shader);
+
+	int success;
+	char infoLog[512];
+	context->GetShaderiv(Shader, GL_COMPILE_STATUS, &success);
+
+	if(!success) {
+		context->GetShaderInfoLog(Shader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
+	return Shader;
+}
+
+unsigned int LoadVertexShader(std::string shader_path, GladGLContext *context) {
+	return LoadShader(shader_path, context, GL_VERTEX_SHADER);
+}
+unsigned int LoadFragmentShader(std::string shader_path, GladGLContext *context) {
+	return LoadShader(shader_path, context, GL_FRAGMENT_SHADER);
+}
+
+unsigned int CreateShaderProgram(GladGLContext *context, unsigned int *vertexShader, unsigned int *fragmentShader) {
+	unsigned int shaderProgram;
+	shaderProgram = context->CreateProgram();
+	context->AttachShader(shaderProgram, *vertexShader);
+	context->AttachShader(shaderProgram, *fragmentShader);
+	context->LinkProgram(shaderProgram);
+
+	return shaderProgram;
+}

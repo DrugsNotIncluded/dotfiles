@@ -1,0 +1,131 @@
+(use-package rainbow-mode :defer t :ensure t)
+
+(use-package origami :ensure t :config
+  (global-origami-mode))
+
+(use-package projectile :ensure t :config
+  (projectile-mode +1)
+  :bind
+  ("s-p" . projectile-command-map))
+
+(setq projectile-track-known-projects-automatically nil)
+
+(use-package magit :ensure t)
+(use-package auto-complete :ensure t)
+(use-package yasnippet :ensure t)
+(use-package yasnippet-snippets :ensure t)
+(use-package yaml-mode :ensure t)
+(use-package go-mode :ensure t)
+(use-package glsl-mode :ensure t)
+(use-package haskell-mode :ensure t)
+(use-package ansible :ensure t)
+
+;;Doxygen highlighting
+(use-package highlight-doxygen :ensure t)
+(highlight-doxygen-global-mode 1)
+
+;;============================================================
+;; interactive completion & ui (company)
+(use-package company
+  :ensure t
+  :config
+  (add-hook 'after-init-hook 'global-company-mode)
+  )
+
+(use-package company-c-headers
+  :ensure t
+  )
+
+(use-package company-box
+  :ensure t
+  :hook (company-mode . company-box-mode))
+
+(add-to-list 'company-backend 'company-capf)
+;;======================================================================
+;; eglot
+
+(use-package eglot
+  :ensure t)
+
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-mode))
+(add-hook 'yaml-mode-hook 'ansible)
+
+(add-hook 'go-mode-hook           'eglot-ensure) ;; requires gopls
+(add-hook 'c++-mode-hook     'eglot-ensure) ;; requires clang
+(add-hook 'js2-mode-hook     'eglot-ensure) ;; requires typescript-language-server from npm
+(add-hook 'python-mode-hook       'eglot-ensure) ;; requires python-lsp-server & jedi (PyPy)
+(add-hook 'cmake-mode-hook   'eglot-ensure) ;; requires cmake-language-server from pip
+
+(add-to-list 'auto-mode-alist '("\\.vs\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.fs\\'" . glsl-mode))
+(add-to-list 'auto-mode-alist '("\\.gs\\'" . glsl-mode))
+
+(add-to-list 'eglot-server-programs '((glsl-mode) "glslls" "--port" :autoport))
+(add-hook 'glsl-mode-hook 'eglot-ensure)
+
+;; =====================================================================
+
+(use-package flycheck
+  :ensure t)
+
+(defvar-local +lsp--flycheck-eglot--current-errors nil)
+
+(defun +lsp--flycheck-eglot-init (checker callback)
+  "CHECKER is the checker (eglot).
+CALLBACK is the function that we need to call when we are done, on all the errors."
+  (eglot-flymake-backend #'+lsp--flycheck-eglot--on-diagnostics)
+  (funcall callback 'finished +lsp--flycheck-eglot--current-errors))
+
+(defun +lsp--flycheck-eglot--on-diagnostics (diags &rest _)
+  (cl-labels
+      ((flymake-diag->flycheck-err
+        (diag)
+        (with-current-buffer (flymake--diag-buffer diag)
+          (flycheck-error-new-at-pos
+           (flymake--diag-beg diag)
+           (pcase (flymake--diag-type diag)
+             ('eglot-note 'info)
+             ('eglot-warning 'warning)
+             ('eglot-error 'error)
+             (_ (error "Unknown diagnostic type, %S" diag)))
+           (flymake--diag-text diag)
+           :end-pos (flymake--diag-end diag)
+           :checker 'eglot
+           :buffer (current-buffer)
+           :filename (buffer-file-name)))))
+    (setq +lsp--flycheck-eglot--current-errors
+          (mapcar #'flymake-diag->flycheck-err diags))
+    ;; Call Flycheck to update the diagnostics annotations
+    (flycheck-buffer-deferred)))
+
+(defun +lsp--flycheck-eglot-available-p ()
+  (bound-and-true-p eglot--managed-mode))
+
+(flycheck-define-generic-checker 'eglot
+  "Report `eglot' diagnostics using `flycheck'."
+  :start #'+lsp--flycheck-eglot-init
+  :predicate #'+lsp--flycheck-eglot-available-p
+  :modes '(prog-mode text-mode))
+
+(push 'eglot flycheck-checkers)
+
+(defun +lsp-eglot-prefer-flycheck-h ()
+  (when eglot--managed-mode
+    (flymake-mode -1)
+    (when-let ((current-checker (flycheck-get-checker-for-buffer)))
+      (unless (equal current-checker 'eglot)
+        (flycheck-add-next-checker 'eglot current-checker)))
+    (flycheck-add-mode 'eglot major-mode)
+    (flycheck-mode 1)
+    ;; Call flycheck on initilization to make sure to display initial
+    ;; errors
+    (flycheck-buffer-deferred)))
+
+(add-hook 'eglot-managed-mode-hook '+lsp-eglot-prefer-flycheck-h)
+
+(with-eval-after-load
+    (when (and
+           (not (fboundp 'flymake--diag-buffer))
+           (fboundp 'flymake--diag-locus))
+      (defalias 'flymake--diag-buffer 'flymake--diag-locus))
+  )

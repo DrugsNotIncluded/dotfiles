@@ -1,0 +1,82 @@
+"acl_maps_old": [
+    {
+      "role": "Administrators",
+      "members": [
+        "cloud-crux-admin1",
+        "cloud-crux-admin0"
+      ]
+    },
+    {
+      "role": "powersUser",
+      "members": [
+        "cloud-crux-user2"
+      ]
+    },
+    {
+      "role": "superpowersUser",
+      "members": [
+        "cloud-crux-super1",
+        "cloud-crux-super2"
+      ]
+    }
+]
+
+"acl_maps_new": [
+    {
+      "role": "Administrators",
+      "members": [
+        "cloud-crux-admin1",
+        "cloud-crux-admin2"
+      ]
+    },
+    {
+      "role": "powersUser",
+      "members": [
+        "cloud-crux-user3",
+        "cloud-crux-user4"
+      ]
+    },
+    {
+      "role": "superpowersUser",
+      "members": [
+        "cloud-crux-super1",
+        "cloud-crux-super2"
+      ]
+    }
+]
+
+"payload": [
+    {
+      "role": {
+        "group_name": "Administrators",
+        "permissions": [
+          "ALL=(ALL) NOPASSWD: ALL"
+        ]
+      },
+      "members": [
+        "cloud-crux-admin1",
+        "cloud-crux-admin2"
+      ]
+    },
+    {
+      "role": {
+        "group_name": "powersUser",
+        "permissions": [
+          "ALL=(rabbitmq) NOPASSWD: ALL",
+          "ALL=(ALL) NOPASSWD: /bin/journalctl -u rabbitmq-server",
+          "ALL=(ALL) NOPASSWD: /bin/journalctl -?? rabbitmq-server",
+          "ALL=(ALL) NOPASSWD: /bin/systemctl start rabbitmq-server",
+          "ALL=(ALL) NOPASSWD: /bin/systemctl stop rabbitmq-server",
+          "ALL=(ALL) NOPASSWD: /bin/systemctl restart rabbitmq-server",
+          "ALL=(ALL) NOPASSWD: /bin/systemctl reload rabbitmq-server",
+          "ALL=(ALL) NOPASSWD: /bin/systemctl status rabbitmq-server",
+          "ALL=(ALL) NOPASSWD: /bin/systemctl enable rabbitmq-server",
+          "ALL=(ALL) NOPASSWD: /bin/systemctl disable rabbitmq-server"
+        ]
+      },
+      "members": [
+        "cloud-crux-user3",
+        "cloud-crux-user4"
+      ]
+    }
+  ]
